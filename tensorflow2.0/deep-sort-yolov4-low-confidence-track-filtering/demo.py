@@ -37,15 +37,21 @@ def main(yolo):
     show_detections = True
     writeVideo_flag = True
     asyncVideo_flag = False
+    cameraCapture = True
 
-    file_path = 'video.webm'
-    if asyncVideo_flag:
-        video_capture = VideoCaptureAsync(file_path)
+    if cameraCapture:
+        #using camera capture
+        video_capture = cv2.VideoCapture(0)
     else:
-        video_capture = cv2.VideoCapture(file_path)
+        file_path = 'run.mp4'
 
-    if asyncVideo_flag:
-        video_capture.start()
+        if asyncVideo_flag:
+            video_capture = VideoCaptureAsync(file_path)
+        else:
+            video_capture = cv2.VideoCapture(file_path)
+
+        if asyncVideo_flag:
+            video_capture.start()
 
     if writeVideo_flag:
         if asyncVideo_flag:
