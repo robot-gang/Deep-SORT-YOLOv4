@@ -18,10 +18,13 @@ from tools import generate_detections as gdet
 import imutils.video
 from videocaptureasync import VideoCaptureAsync
 
+import sys
+
 warnings.filterwarnings('ignore')
 
 
-def main(yolo):
+def main(yolo, cameraCapture, file_path):
+
     # Definition of the parameters
     max_cosine_distance = 0.3
     nn_budget = None
@@ -37,14 +40,11 @@ def main(yolo):
     show_detections = True
     writeVideo_flag = True
     asyncVideo_flag = False
-    cameraCapture = True
 
     if cameraCapture:
         #using camera capture
         video_capture = cv2.VideoCapture(0)
     else:
-        file_path = 'run.mp4'
-
         if asyncVideo_flag:
             video_capture = VideoCaptureAsync(file_path)
         else:
@@ -149,4 +149,17 @@ def main(yolo):
 
 
 if __name__ == '__main__':
-    main(YOLO())
+    cameraCapture = False
+    file_path = 'video.webm'
+
+    if len(sys.argv) == 2:
+        if sys.argv[1] == '1':
+            cameraCapture = True
+    elif len(sys.argv) == 3:
+        if sys.argv[1] == '0':
+            file_path = sys.argv[2]
+    else:
+        print("python demo.py <1 or 0> [<path to video if it is 0>]")
+        sys.exit()
+
+    main(YOLO(), cameraCapture, file_path)
