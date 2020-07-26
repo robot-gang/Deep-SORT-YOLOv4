@@ -18,30 +18,36 @@ from tools import generate_detections as gdet
 import imutils.video
 from videocaptureasync import VideoCaptureAsync
 
+#our imports
+from datetime import datetime
+import config
 import sys
 
 warnings.filterwarnings('ignore')
 
 
-def main(yolo, cameraCapture, file_path):
+def main(yolo, local_params):
+
+    camera_capture = local_params['camera_capture']
+    file_path = local_params['input_file_path']
 
     # Definition of the parameters
-    max_cosine_distance = 0.3
-    nn_budget = None
-    nms_max_overlap = 1.0
+    max_cosine_distance = local_params['max_cosine_distance']
+    nn_budget = local_params['nn_budget']
+    nms_max_overlap = local_params['nms_max_overlap']
 
     # Deep SORT
-    model_filename = 'model_data/mars-small128.pb'
-    encoder = gdet.create_box_encoder(model_filename, batch_size=1)
+    model_filename = local_params['model_filename']
+    encoder = gdet.create_box_encoder(model_filename, batch_size=local_params['encoder_batch_size'])
 
-    metric = nn_matching.NearestNeighborDistanceMetric("cosine", max_cosine_distance, nn_budget)
+    metric = nn_matching.NearestNeighborDistanceMetric(local_params['distance_metric'], max_cosine_distance, nn_budget)
     tracker = Tracker(metric)
 
-    show_detections = True
-    writeVideo_flag = True
-    asyncVideo_flag = False
+    show_detections = local_params['show_detections']
+    writeVideo_flag = local_params['write_video_flag']
+    asyncVideo_flag = local_params['async_video_flag']
 
-    if cameraCapture:
+    if camera_capture:
         #using camera capture
         video_capture = cv2.VideoCapture(0)
     else:
@@ -61,7 +67,7 @@ def main(yolo, cameraCapture, file_path):
             w = int(video_capture.get(3))
             h = int(video_capture.get(4))
         fourcc = cv2.VideoWriter_fourcc(*'XVID')
-        out = cv2.VideoWriter('output_yolov4.avi', fourcc, 30, (w, h))
+        out = cv2.VideoWriter(local_params['output_file'] + '_' + str(datetime.now()) + '.avi', fourcc, 30, (w, h))
         frame_index = -1
 
     fps = 0.0
@@ -149,17 +155,5 @@ def main(yolo, cameraCapture, file_path):
 
 
 if __name__ == '__main__':
-    cameraCapture = False
-    file_path = 'video.webm'
-
-    if len(sys.argv) == 2:
-        if sys.argv[1] == '1':
-            cameraCapture = True
-    elif len(sys.argv) == 3:
-        if sys.argv[1] == '0':
-            file_path = sys.argv[2]
-    else:
-        print("python demo.py <1 or 0> [<path to video if it is 0>]")
-        sys.exit()
-
-    main(YOLO(), cameraCapture, file_path)
+    local_params = config.load_file()
+    main(YOLO(), local_params)
