@@ -1,14 +1,15 @@
 name: visual_nav
 channels:
+  - conda-forge
   - defaults
 dependencies:
-  - python
-  - keras
-  - pillow
-  - numpy
-  - matplotlib
-  - tensorflow-gpu
-  - imutils
-  - scikit-learn
-  - opencv
+  - python=3.8
+  - keras=2.3
+  - pillow=7.2
+  - numpy=1.18
+  - matplotlib=3.3
+  - tensorflow-gpu=2.2
+  - imutils=0.5
+  - scikit-learn=0.23
+  - opencv=4.4
 
