@@ -1,0 +1,14 @@
+name: visual_nav
+channels:
+  - defaults
+dependencies:
+  - python
+  - keras
+  - pillow
+  - numpy
+  - matplotlib
+  - tensorflow-gpu
+  - imutils
+  - scikit-learn
+  - opencv
+
